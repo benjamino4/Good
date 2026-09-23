@@ -1,0 +1,24 @@
+# Render blueprint for JUST TRIBES.
+# Flat repo: the whole thing is one Node app that also serves the frontend.
+services:
+  - type: web
+    name: just-tribes
+    runtime: node
+    plan: free
+    buildCommand: npm install
+    startCommand: node src/index.js
+    healthCheckPath: /api/health
+    envVars:
+      - key: PGSSLMODE
+        value: require
+      - key: JWT_SECRET
+        generateValue: true      # Render creates a strong random value
+      - key: DATABASE_URL
+        sync: false              # paste your Aiven Service URI in the dashboard
+      - key: TELEGRAM_BOT_TOKEN
+        sync: false              # paste your Justtribesmini_bot token
+      # Optional — enable the /admin panel:
+      # - key: ADMIN_USER
+      #   sync: false
+      # - key: ADMIN_PASS
+      #   sync: false

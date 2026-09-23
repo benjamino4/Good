@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"/>
+<title>JUST TRIBES</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<script src="https://unpkg.com/@tonconnect/ui@2/dist/tonconnect-ui.min.js"></script>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Cinzel:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css"/>
+<script>
+  tailwind.config = { theme: { extend: { fontFamily: { display:['Cinzel','serif'] } } } }
+</script>
+</head>
+<body>
+<div class="app-shell" id="app">
+
+  <!-- ============ TOP STATUS BAR ============ -->
+  <header class="px-4 pt-4 pb-2 sticky top-0 z-30"
+          style="background:linear-gradient(180deg,rgba(10,12,15,.96),rgba(10,12,15,.6));backdrop-filter:blur(10px)">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="relative">
+          <div class="w-11 h-11 rounded-2xl nb-hard flex items-center justify-center text-lg"
+               style="background:linear-gradient(135deg,#2a1c12,#1a1116)">🧔🏾</div>
+          <span class="absolute -bottom-1 -right-1 w-4 h-4 rounded-full border-2 border-[#0a0c0f] bg-emerald-400"></span>
+        </div>
+        <div class="leading-tight">
+          <div class="text-[15px] font-extrabold">Ben Daniel</div>
+          <div class="text-[11px] text-[#8b95a4] flex items-center gap-1">
+            <span class="chip px-2 py-[1px] text-[10px] font-bold glow-ember">CHIEF</span>
+            <span>Shadowborn Tribe</span>
+          </div>
+        </div>
+      </div>
+      <button onclick="openNotifications()" class="relative w-10 h-10 rounded-xl nb flex items-center justify-center">
+        <span class="text-lg">🪨</span>
+        <span class="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 rounded-full bg-[#e08a42] text-[10px] font-black text-black flex items-center justify-center" id="notifDot">3</span>
+      </button>
+    </div>
+
+    <!-- currency strip -->
+    <div class="mt-3 grid grid-cols-3 gap-2">
+      <div class="nb nb-ember rounded-2xl px-3 py-2 flex items-center gap-2">
+        <span class="text-lg">🔥</span>
+        <div class="leading-none">
+          <div class="text-[10px] text-[#8b95a4] font-semibold">EMBER</div>
+          <div class="text-[15px] font-black glow-ember" id="emberVal">12,480</div>
+        </div>
+      </div>
+      <div class="nb nb-loyal rounded-2xl px-3 py-2 flex items-center gap-2">
+        <span class="text-lg">🛡️</span>
+        <div class="leading-none">
+          <div class="text-[10px] text-[#8b95a4] font-semibold">LOYALTY</div>
+          <div class="text-[15px] font-black glow-loyal" id="loyalVal">8,215</div>
+        </div>
+      </div>
+      <div class="nb nb-star rounded-2xl px-3 py-2 flex items-center gap-2">
+        <span class="text-lg">⭐</span>
+        <div class="leading-none">
+          <div class="text-[10px] text-[#8b95a4] font-semibold">STARS</div>
+          <div class="text-[15px] font-black glow-star" id="starVal">340</div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ============ SCREENS CONTAINER ============ -->
+  <main class="px-4 pb-28 pt-2" id="screens">
+<!-- ================= FIRE (HOME / CAMPFIRE) ================= -->
+<section class="screen active" id="screen-fire">
+  <div class="text-center mb-2">
+    <h1 class="font-display text-2xl font-extrabold tracking-wide">JUST TRIBES</h1>
+    <p class="text-[11px] text-[#8b95a4]">Small tribes. Fierce hearts. Bigger tomorrow.</p>
+  </div>
+
+  <!-- campfire hero -->
+  <div class="nb nb-ember rounded-3xl p-4 relative overflow-hidden">
+    <div class="embers" id="emberField"></div>
+    <div class="flex flex-col items-center relative z-10">
+      <div id="campfire"></div>
+      <div class="mt-2 text-center">
+        <div class="text-[11px] text-[#8b95a4] font-semibold">DAILY CHECK-IN</div>
+        <div class="text-[13px]">Streak <span class="glow-ember font-black" id="streakVal">7</span> days · keep the fire alive</div>
+      </div>
+      <button class="btn btn-ember px-6 py-3 mt-3 text-sm" id="checkinBtn" onclick="doCheckin()">🔥 Feed the Fire (+120 Ember)</button>
+    </div>
+  </div>
+
+  <!-- position / clan status -->
+  <div class="nb rounded-2xl p-4 mt-3">
+    <div class="flex items-center justify-between">
+      <div>
+        <div class="text-[11px] text-[#8b95a4] font-semibold">YOUR STANDING</div>
+        <div class="text-lg font-black">You are a <span class="glow-ember">Chief</span></div>
+        <div class="text-[12px] text-[#8b95a4]">Rank ladder: Toddler → Kin → Hunter → Elder → Head → Chief</div>
+      </div>
+      <div class="text-4xl">👑</div>
+    </div>
+    <div class="grid grid-cols-2 gap-2 mt-3">
+      <button class="btn btn-ghost py-2 text-[12px]" onclick="go('tribe')">View Your Tribe</button>
+      <button class="btn btn-loyal py-2 text-[12px]" onclick="openClanModal()">Join / Create Band</button>
+    </div>
+  </div>
+
+  <!-- personal share -->
+  <div class="nb rounded-2xl p-4 mt-3">
+    <div class="flex justify-between items-center mb-2">
+      <div class="font-bold text-sm">Your Airdrop Share</div>
+      <span class="chip px-2 py-[2px] text-[11px] glow-star font-bold">Top 12%</span>
+    </div>
+    <div class="track h-3"><div class="fill-ember h-full" style="width:64%"></div></div>
+    <div class="flex justify-between text-[11px] text-[#8b95a4] mt-1">
+      <span>Driven by your Ember — never wealth</span><span>0.64%</span>
+    </div>
+  </div>
+
+  <!-- quests -->
+  <div class="mt-3">
+    <div class="flex justify-between items-center mb-2">
+      <h2 class="font-bold text-sm">Today's Quests</h2>
+      <span class="text-[11px] text-[#8b95a4]" id="questCount">1/3 done</span>
+    </div>
+    <div id="questList" class="space-y-2"></div>
+  </div>
+
+  <!-- stones from the hearth (mini) -->
+  <div class="stone p-4 mt-3">
+    <div class="text-[10px] tracking-widest text-[#c9b795] font-bold mb-1">STONES FROM THE HEARTH</div>
+    <div class="carve text-[15px]" id="hearthNote">“We are few, but the fire never sleeps.”</div>
+  </div>
+</section>
+<!-- ================= TRIBE ================= -->
+<section class="screen" id="screen-tribe">
+  <!-- hearth header -->
+  <div class="nb nb-loyal rounded-3xl p-4">
+    <div class="flex items-center justify-between">
+      <div>
+        <div class="text-[11px] text-[#8b95a4] font-semibold">THE HEARTH</div>
+        <div class="text-xl font-black flex items-center gap-2">Shadowborn <span class="chip px-2 py-[1px] text-[11px] glow-loyal">Lv.3</span></div>
+        <div class="text-[12px] text-[#8b95a4]" id="memberCount">18 / 25 members · Avg Loyalty 456</div>
+      </div>
+      <div class="text-4xl">🔥</div>
+    </div>
+    <div class="track h-3 mt-3"><div class="fill-loyal h-full" style="width:72%"></div></div>
+    <div class="flex justify-between text-[11px] text-[#8b95a4] mt-1">
+      <span>Hearth pool: <b class="glow-loyal">42,900</b> Loyalty</span><span>Next: Lv.4</span>
+    </div>
+    <div class="grid grid-cols-3 gap-2 mt-3">
+      <button class="btn btn-loyal py-2 text-[11px]" onclick="toast('📣 War Cry sent to all kin!')">📣 War Cry</button>
+      <button class="btn btn-ghost py-2 text-[11px]" onclick="toast('🥁 Drum beaten! Idle kin nudged.')">🥁 Beat Drum</button>
+      <button class="btn btn-ghost py-2 text-[11px]" onclick="go('lands')">🏘️ Settlement</button>
+    </div>
+  </div>
+
+  <!-- cave wall / editable slogan -->
+  <div class="stone p-4 mt-3">
+    <div class="flex justify-between items-center mb-1">
+      <div class="text-[10px] tracking-widest text-[#c9b795] font-bold">🪨 CAVE WALL</div>
+      <button class="text-[11px] text-[#c9b795] underline" onclick="editCaveWall()">edit ✎</button>
+    </div>
+    <div class="carve text-[16px] leading-snug" id="caveWall">“Hunt as one. Feast as one. Rise as one.”</div>
+    <div class="text-[10px] text-[#8f8168] mt-2">— carved by Chief Ben Daniel</div>
+  </div>
+
+  <!-- important figures -->
+  <div class="mt-3">
+    <h2 class="font-bold text-sm mb-2">Key Figures</h2>
+    <div id="figureList" class="space-y-2"></div>
+  </div>
+
+  <!-- top contributors -->
+  <div class="mt-3">
+    <div class="flex justify-between items-center mb-2">
+      <h2 class="font-bold text-sm">🏅 Top Contributors</h2>
+      <span class="text-[11px] text-[#8b95a4]">by Ember earned</span>
+    </div>
+    <div id="contribList" class="space-y-2"></div>
+  </div>
+
+  <!-- full roster -->
+  <div class="mt-3">
+    <div class="flex justify-between items-center mb-2">
+      <h2 class="font-bold text-sm">Roster</h2>
+      <button class="text-[11px] glow-loyal font-bold" onclick="go('more');go('referral')">+ Invite Kin</button>
+    </div>
+    <div id="rosterList" class="grid grid-cols-1 gap-2"></div>
+  </div>
+</section>
+<!-- ================= RANKS ================= -->
+<section class="screen" id="screen-ranks">
+  <div class="flex gap-2 mb-3">
+    <button class="btn btn-ember py-2 px-4 text-[12px] flex-1" id="rkTribesBtn" onclick="switchRank('tribes')">🏰 Tribes</button>
+    <button class="btn btn-ghost py-2 px-4 text-[12px] flex-1" id="rkKinBtn" onclick="switchRank('kin')">🧑‍🤝‍🧑 Kin</button>
+  </div>
+
+  <!-- world leaderboard header -->
+  <div class="nb rounded-2xl p-4 mb-3">
+    <div class="text-[11px] text-[#8b95a4] font-semibold" id="rankSubtitle">WORLD LEADERBOARD · TRIBES BY AVG LOYALTY</div>
+    <div class="flex items-center justify-between mt-1">
+      <div class="text-lg font-black">Season of Ash · Wk 6</div>
+      <span class="chip px-2 py-[2px] text-[11px] glow-star font-bold">Live</span>
+    </div>
+    <div class="text-[12px] text-[#8b95a4] mt-1">Your tribe: <b class="glow-ember" id="myTribeRank">#14</b> of 1,208 · small &amp; fierce</div>
+  </div>
+
+  <div id="rankList" class="space-y-2"></div>
+</section>
+<!-- ================= LANDS ================= -->
+<section class="screen" id="screen-lands">
+  <div class="nb rounded-3xl p-4">
+    <div class="flex justify-between items-start">
+      <div>
+        <div class="text-[11px] text-[#8b95a4] font-semibold">YOUR TERRITORY</div>
+        <div class="text-xl font-black" id="settleName">Village</div>
+        <div class="text-[12px] text-[#8b95a4]">Stage 1 of 5 · grows with Hearth level</div>
+      </div>
+      <span class="chip px-2 py-[2px] text-[11px] glow-loyal font-bold">Lv.3</span>
+    </div>
+    <!-- SVG settlement (code-drawn, no images) -->
+    <div id="settleArt" class="mt-3 rounded-2xl overflow-hidden nb-hard"></div>
+    <div class="track h-3 mt-3"><div class="fill-loyal h-full" id="settleFill" style="width:40%"></div></div>
+    <div class="flex justify-between text-[11px] text-[#8b95a4] mt-1">
+      <span id="settleProg">Village → Town</span><span>Spend Loyalty to build</span>
+    </div>
+    <button class="btn btn-loyal w-full py-3 mt-3 text-sm" onclick="upgradeSettlement()">🏗️ Build Up (− 6,000 Loyalty)</button>
+  </div>
+
+  <!-- settlement stages carousel -->
+  <div class="mt-3">
+    <h2 class="font-bold text-sm mb-2">Settlement Stages</h2>
+    <div class="grid grid-cols-5 gap-2" id="stageStrip"></div>
+  </div>
+
+  <!-- land expansion note (links to upgrades) -->
+  <div class="nb nb-star rounded-2xl p-4 mt-3">
+    <div class="flex items-center justify-between">
+      <div>
+        <div class="font-bold text-sm">Expand the Land</div>
+        <div class="text-[12px] text-[#8b95a4]">Raise member limit with ⭐ Stars</div>
+      </div>
+      <span class="text-3xl">🗺️</span>
+    </div>
+    <button class="btn btn-star w-full py-2.5 mt-3 text-[13px]" onclick="go('more');go('upgrades')">Go to Land Upgrades →</button>
+  </div>
+</section>
+<!-- ================= SKY (STAR-LORE + STORE) ================= -->
+<section class="screen" id="screen-sky">
+  <!-- star-lore night sky -->
+  <div class="nb nb-star rounded-3xl p-4 relative overflow-hidden">
+    <div id="starField" class="absolute inset-0"></div>
+    <div class="relative z-10">
+      <div class="text-[11px] text-[#8b95a4] font-semibold">STAR-LORE</div>
+      <div class="text-xl font-black glow-star">Read the Night Sky</div>
+      <p class="text-[12px] text-[#8b95a4] mt-1">Align constellations for tribe-wide Ember multipliers.</p>
+      <button class="btn btn-star px-5 py-2.5 mt-3 text-[13px]" onclick="toast('✨ Wolf constellation aligned! +5% Ember for 6h')">Align Constellation</button>
+    </div>
+  </div>
+
+  <!-- top up in-app Stars with real Telegram Stars -->
+  <div class="flex justify-between items-center mt-4 mb-2">
+    <h2 class="font-bold text-sm">⭐ Top up Stars</h2>
+    <span class="chip px-2 py-[2px] text-[11px] glow-star font-bold">Pay with Telegram Stars</span>
+  </div>
+  <div id="starPacks" class="grid grid-cols-2 gap-3"></div>
+
+  <!-- store -->
+  <div class="flex justify-between items-center mt-4 mb-2">
+    <h2 class="font-bold text-sm">🏪 The Store</h2>
+    <span class="chip px-2 py-[2px] text-[11px] glow-star font-bold">Spend ⭐ Stars</span>
+  </div>
+  <div id="storeGrid" class="grid grid-cols-2 gap-3"></div>
+</section>
+<!-- ================= MORE (HUB) ================= -->
+<section class="screen" id="screen-more">
+  <h2 class="font-bold text-sm mb-3">More</h2>
+  <div class="grid grid-cols-2 gap-3">
+    <button class="nb rounded-2xl p-4 text-left" onclick="go('upgrades')">
+      <div class="text-3xl">🏗️</div><div class="font-bold mt-1">Upgrades</div>
+      <div class="text-[11px] text-[#8b95a4]">Settlement, land &amp; boosts</div></button>
+    <button class="nb rounded-2xl p-4 text-left" onclick="go('relics')">
+      <div class="text-3xl">🏺</div><div class="font-bold mt-1">Relics</div>
+      <div class="text-[11px] text-[#8b95a4]">Ancient Ember boosters</div></button>
+    <button class="nb rounded-2xl p-4 text-left" onclick="go('referral')">
+      <div class="text-3xl">🪢</div><div class="font-bold mt-1">Referral</div>
+      <div class="text-[11px] text-[#8b95a4]">Grow your kin</div></button>
+    <button class="nb rounded-2xl p-4 text-left" onclick="go('claim')">
+      <div class="text-3xl">💎</div><div class="font-bold mt-1">Claim / Wallet</div>
+      <div class="text-[11px] text-[#8b95a4]">Connect TON wallet</div></button>
+  </div>
+
+  <!-- codex / rules (admin-editable via panel) -->
+  <div class="stone p-4 mt-3">
+    <div class="text-[10px] tracking-widest text-[#c9b795] font-bold mb-2">📜 THE CODEX</div>
+    <div class="carve text-[13px] leading-relaxed whitespace-pre-line" id="rulesBody">1. Feed the Fire every day to earn Ember.
+2. A share of your Ember tithes into your tribe’s Hearth as Loyalty.
+3. Tribes are ranked by AVERAGE Loyalty per member.
+4. Spend Stars in the Sky store on relics, boosts and land.
+5. Grow your settlement Village → Town → Dynasty → Empire → Kingdom.
+6. The airdrop rewards consistency and community.</div>
+  </div>
+</section>
+
+<!-- ================= UPGRADES ================= -->
+<section class="screen" id="screen-upgrades">
+  <button class="text-[12px] text-[#8b95a4] mb-2" onclick="go('more')">← Back</button>
+  <h2 class="font-bold text-lg mb-1">Upgrades</h2>
+  <p class="text-[12px] text-[#8b95a4] mb-3">Spend Loyalty &amp; Stars to strengthen the tribe.</p>
+
+  <div class="nb nb-star rounded-2xl p-4 mb-3">
+    <div class="flex items-center justify-between">
+      <div><div class="font-bold text-sm">🗺️ Land Expansion</div>
+        <div class="text-[12px] text-[#8b95a4]">Member limit <b id="memLimit">25</b> → <b>30</b></div></div>
+      <span class="chip px-2 py-[2px] text-[11px] glow-star font-bold">⭐ 150</span>
+    </div>
+    <button class="btn btn-star w-full py-2.5 mt-3 text-[13px]" onclick="buyLand()">Expand Land (+5 slots)</button>
+  </div>
+
+  <div id="upgradeList" class="space-y-2"></div>
+</section>
+
+<!-- ================= RELICS ================= -->
+<section class="screen" id="screen-relics">
+  <button class="text-[12px] text-[#8b95a4] mb-2" onclick="go('more')">← Back</button>
+  <h2 class="font-bold text-lg mb-1">Relics</h2>
+  <p class="text-[12px] text-[#8b95a4] mb-3">Equip relics to boost your Ember. Earned or bought with Stars.</p>
+  <div id="relicGrid" class="grid grid-cols-2 gap-3"></div>
+</section>
+
+<!-- ================= REFERRAL ================= -->
+<section class="screen" id="screen-referral">
+  <button class="text-[12px] text-[#8b95a4] mb-2" onclick="go('more')">← Back</button>
+  <div class="nb nb-ember rounded-3xl p-5 text-center">
+    <div class="text-4xl">🪢</div>
+    <h2 class="font-black text-lg mt-1">Call Your Kin</h2>
+    <p class="text-[12px] text-[#8b95a4]">Both you and your friend earn Ember. Bring fierce hunters, not ghosts — idle kin drag the average down.</p>
+    <div class="stone p-3 mt-3 flex items-center justify-between">
+      <span class="carve text-[14px]" id="refCode">TRIBE-BEN-4X9K</span>
+      <button class="btn btn-ember px-3 py-1.5 text-[12px]" onclick="copyRef()">Copy</button>
+    </div>
+    <button class="btn btn-ember w-full py-3 mt-3 text-sm" onclick="toast('🔗 Invite link shared to Telegram!')">Share Invite Link</button>
+    <div class="grid grid-cols-3 gap-2 mt-3 text-center">
+      <div class="nb rounded-xl py-2"><div class="font-black glow-ember">9</div><div class="text-[10px] text-[#8b95a4]">Joined</div></div>
+      <div class="nb rounded-xl py-2"><div class="font-black glow-ember">+2,700</div><div class="text-[10px] text-[#8b95a4]">Ember</div></div>
+      <div class="nb rounded-xl py-2"><div class="font-black glow-ember">3</div><div class="text-[10px] text-[#8b95a4]">Active</div></div>
+    </div>
+  </div>
+  <div class="stone p-4 mt-3">
+    <div class="text-[10px] tracking-widest text-[#c9b795] font-bold mb-1">KIN MILESTONES</div>
+    <div id="refMilestones" class="space-y-2 mt-1"></div>
+  </div>
+</section>
+
+<!-- ================= CLAIM / WALLET ================= -->
+<section class="screen" id="screen-claim">
+  <button class="text-[12px] text-[#8b95a4] mb-2" onclick="go('more')">← Back</button>
+  <div class="nb nb-star rounded-3xl p-5 text-center">
+    <div class="text-4xl">💎</div>
+    <h2 class="font-black text-lg mt-1">Claim Allocation</h2>
+    <p class="text-[12px] text-[#8b95a4]">Connect a wallet to claim your airdrop earned through loyalty &amp; consistency.</p>
+    <div class="nb rounded-2xl p-3 mt-3">
+      <div class="text-[11px] text-[#8b95a4]">Estimated allocation</div>
+      <div class="text-2xl font-black glow-star" id="allocVal">— $JUST</div>
+    </div>
+    <div id="walletState" class="mt-3"></div>
+  </div>
+  <div class="mt-3 space-y-2" id="walletList"></div>
+</section>
+  </main>
+
+  <!-- ============ BOTTOM NAV ============ -->
+  <nav class="nav px-2 py-2 fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[460px] z-40">
+    <div class="grid grid-cols-6 gap-1">
+      <button class="nav-item active flex flex-col items-center py-1" data-nav="fire" onclick="go('fire')">
+        <span class="text-xl">🔥</span><span class="text-[10px] font-bold mt-.5">Fire</span>
+        <span class="dot w-1 h-1 rounded-full bg-current mt-1"></span>
+      </button>
+      <button class="nav-item flex flex-col items-center py-1" data-nav="tribe" onclick="go('tribe')">
+        <span class="text-xl">🏕️</span><span class="text-[10px] font-bold mt-.5">Tribe</span>
+        <span class="dot w-1 h-1 rounded-full bg-current mt-1"></span>
+      </button>
+      <button class="nav-item flex flex-col items-center py-1" data-nav="ranks" onclick="go('ranks')">
+        <span class="text-xl">🏆</span><span class="text-[10px] font-bold mt-.5">Ranks</span>
+        <span class="dot w-1 h-1 rounded-full bg-current mt-1"></span>
+      </button>
+      <button class="nav-item flex flex-col items-center py-1" data-nav="lands" onclick="go('lands')">
+        <span class="text-xl">🗺️</span><span class="text-[10px] font-bold mt-.5">Lands</span>
+        <span class="dot w-1 h-1 rounded-full bg-current mt-1"></span>
+      </button>
+      <button class="nav-item flex flex-col items-center py-1" data-nav="sky" onclick="go('sky')">
+        <span class="text-xl">✨</span><span class="text-[10px] font-bold mt-.5">Sky</span>
+        <span class="dot w-1 h-1 rounded-full bg-current mt-1"></span>
+      </button>
+      <button class="nav-item flex flex-col items-center py-1" data-nav="more" onclick="go('more')">
+        <span class="text-xl">☰</span><span class="text-[10px] font-bold mt-.5">More</span>
+        <span class="dot w-1 h-1 rounded-full bg-current mt-1"></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- toast + modal mounts -->
+  <div id="toast" class="toast"><div class="nb nb-ember px-4 py-3 rounded-2xl text-sm font-bold" id="toastMsg"></div></div>
+  <div id="modal" class="modal"><div class="backdrop" onclick="closeModal()"></div><div class="sheet" id="modalSheet"></div></div>
+</div>
+<script src="app.js"></script>
+</body>
+</html>

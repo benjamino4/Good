@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"/>
+<title>JUST TRIBES · Admin</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Cinzel:wght@600;700;800&display=swap" rel="stylesheet">
+<script>
+  tailwind.config = { theme: { extend: { fontFamily: { display:['Cinzel','serif'] } } } }
+</script>
+<style>
+  :root{ --bg:#0a0c0f; --card:#12161c; --line:#242c37; --ember:#e0842f; --loyal:#4bb3a5; --star:#7c8cff; --ink:#e7ecf2; --mut:#8b95a4; }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:820px;margin:0 auto;padding:16px}
+  .card{background:linear-gradient(180deg,#141922,#10141a);border:1px solid var(--line);border-radius:18px}
+  .btn{border:none;border-radius:12px;font-weight:700;cursor:pointer;color:#0a0c0f;transition:.15s transform;padding:10px 14px}
+  .btn:active{transform:scale(.97)}
+  .btn-ember{background:linear-gradient(135deg,#f0a24a,#e0842f);color:#180d03}
+  .btn-ghost{background:#1a212b;color:var(--ink);border:1px solid var(--line)}
+  .btn-danger{background:#3a1a1a;color:#ffb3b3;border:1px solid #5a2a2a}
+  input,textarea,select{width:100%;background:#0b0e13;border:1px solid var(--line);border-radius:10px;padding:9px 11px;color:var(--ink);font-size:13px;font-family:inherit}
+  input:focus,textarea:focus,select:focus{outline:none;border-color:var(--ember)}
+  label{font-size:11px;color:var(--mut);font-weight:600;display:block;margin:0 0 4px}
+  .tab{padding:8px 12px;border-radius:10px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;background:#131922;color:var(--mut);border:1px solid var(--line)}
+  .tab.active{background:linear-gradient(135deg,#f0a24a,#e0842f);color:#180d03;border-color:transparent}
+  .glow{color:var(--ember)}
+  .row{display:grid;gap:8px;grid-template-columns:repeat(auto-fit,minmax(120px,1fr))}
+  .item{background:#0e131a;border:1px solid var(--line);border-radius:12px;padding:12px;margin-bottom:10px}
+  .mut{color:var(--mut);font-size:12px}
+  .stat{background:#0e131a;border:1px solid var(--line);border-radius:14px;padding:14px;text-align:center}
+  .stat .n{font-size:24px;font-weight:900}
+  table{width:100%;border-collapse:collapse;font-size:12px}
+  th,td{text-align:left;padding:7px 8px;border-bottom:1px solid var(--line)}
+  th{color:var(--mut);font-weight:600}
+  .toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%) translateY(30px);opacity:0;transition:.25s;background:linear-gradient(135deg,#f0a24a,#e0842f);color:#180d03;font-weight:800;padding:10px 18px;border-radius:12px;z-index:50;font-size:13px}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  .hide{display:none}
+  .logo{width:44px;height:44px}
+</style>
+</head>
+<body>
+<div class="toast" id="toast"></div>
+
+<!-- ============ LOGIN ============ -->
+<div id="login" class="wrap" style="padding-top:60px">
+  <div class="card" style="padding:26px;max-width:400px;margin:0 auto">
+    <div style="text-align:center;margin-bottom:18px">
+      <svg class="logo" viewBox="0 0 48 48" style="margin:0 auto" xmlns="http://www.w3.org/2000/svg">
+        <rect width="48" height="48" rx="12" fill="#160f0a"/>
+        <path d="M24 10 C30 18 30 24 27 29 C33 27 31 17 24 8 C17 17 15 27 21 29 C18 24 18 18 24 10Z" fill="#e0842f"/>
+        <circle cx="24" cy="30" r="3" fill="#ffce6b"/>
+      </svg>
+      <h1 class="font-display" style="font-size:22px;font-weight:800;margin:10px 0 2px">JUST TRIBES</h1>
+      <div class="mut">Admin Control Panel</div>
+    </div>
+    <div id="loginDisabled" class="hide" style="background:#3a1a1a;border:1px solid #5a2a2a;border-radius:10px;padding:12px;font-size:12px;color:#ffb3b3;margin-bottom:12px">
+      Admin is not configured. Set <b>ADMIN_USER</b> and <b>ADMIN_PASS</b> in the server environment, then reload.
+    </div>
+    <div style="margin-bottom:10px"><label>Username</label><input id="u" autocomplete="username" placeholder="admin"/></div>
+    <div style="margin-bottom:14px"><label>Password</label><input id="p" type="password" autocomplete="current-password" placeholder="••••••••"/></div>
+    <button class="btn btn-ember" style="width:100%" onclick="doLogin()">Enter the Hearth</button>
+    <div class="mut" style="text-align:center;margin-top:12px;font-size:11px">Launched by the admin bot as its own mini app.</div>
+  </div>
+</div>
+
+<!-- ============ PANEL ============ -->
+<div id="panel" class="wrap hide">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+    <div style="display:flex;align-items:center;gap:10px">
+      <svg class="logo" viewBox="0 0 48 48" style="width:34px;height:34px" xmlns="http://www.w3.org/2000/svg">
+        <rect width="48" height="48" rx="12" fill="#160f0a"/>
+        <path d="M24 10 C30 18 30 24 27 29 C33 27 31 17 24 8 C17 17 15 27 21 29 C18 24 18 18 24 10Z" fill="#e0842f"/>
+        <circle cx="24" cy="30" r="3" fill="#ffce6b"/></svg>
+      <div><div style="font-weight:800">JUST TRIBES <span class="glow">Admin</span></div>
+        <div class="mut" id="whoami">signed in</div></div>
+    </div>
+    <button class="btn btn-ghost" onclick="logout()">Log out</button>
+  </div>
+
+  <!-- tabs -->
+  <div style="display:flex;gap:7px;overflow-x:auto;padding-bottom:10px" id="tabs"></div>
+
+  <div id="view"></div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
